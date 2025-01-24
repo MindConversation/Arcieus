@@ -1,0 +1,4 @@
+- name: Copy Dependencies
+  run: |
+    copy icudtl.dat output/
+    copy locales.html output/

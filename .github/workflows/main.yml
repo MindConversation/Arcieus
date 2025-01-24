@@ -13,22 +13,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    # Step 1: Checkout the repository
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Setup MSVC Environment and Compile
+    # Step 2: Set up MSVC environment and compile the C++ code
+    - name: Setup MSVC and Compile
       shell: cmd
       run: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+        echo Initializing MSVC environment...
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"
         cl /EHsc Arcieus.cpp /Fe:output/Arcieus.exe
 
+    # Step 3: Copy required dependencies (icudtl.dat and locales/)
     - name: Copy Dependencies
       shell: cmd
       run: |
+        echo Copying dependencies...
         mkdir output
         copy icudtl.dat output\
         xcopy locales output\locales /E /I
 
+    # Step 4: Upload the executable and dependencies as an artifact
     - name: Upload Executable and Dependencies
       uses: actions/upload-artifact@v3
       with:

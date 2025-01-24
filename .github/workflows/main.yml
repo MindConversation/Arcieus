@@ -1,4 +1,36 @@
-- name: Copy Dependencies
-  run: |
-    copy icudtl.dat output/
-    copy locales.html output/
+name: Build C++ Executable with Dependencies
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Initialize MSVC and Compile
+      run: |
+        echo "Initializing MSVC..."
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+        cl /EHsc Arcieus.cpp /Fe:output/Arcieus.exe
+
+    - name: Copy Dependencies
+      run: |
+        echo "Copying dependencies..."
+        mkdir output
+        copy icudtl.dat output/
+        xcopy locales output/locales /E /I
+
+    - name: Upload Executable and Dependencies
+      uses: actions/upload-artifact@v3
+      with:
+        name: Compiled-Arcieus-with-Dependencies
+        path: output/
